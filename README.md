@@ -1,4 +1,4 @@
-# Dynamic Convolutional Neutral Network
+# Dynamic Convolutional Neural Network
 Pytorch implementation of Dynamic Convolutional Neural Network for Text Classification.
 
 ## Note
