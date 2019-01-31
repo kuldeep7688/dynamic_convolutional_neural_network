@@ -17,4 +17,4 @@ DCNN.
 ## Reference
 - Original paper [A Convolutional Neural Network for Modelling Sentences](https://arxiv.org/abs/1404.2188v1) 
   by Kalchbrenner. <br>
-- Very cool pytorch sentiment analysis [github repo](https://github.com/bentrevett/pytorch-sentiment-analysis).
+- Very cool pytorch sentiment analysis [github repo](https://github.com/bentrevett/pytorch-sentiment-analysis)...
