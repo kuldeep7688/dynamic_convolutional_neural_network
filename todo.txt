@@ -1,0 +1,16 @@
+- Results on Movie review data sets in SST both fine grained and binary.
+	- use phrases as separate training data data points
+	- vocab size 15448
+	- tanh non linear layer
+	- drop put to penultimate and last tanh no linearity layer
+	- for binary sst data 
+		- filter sizes = 7 and 5
+		- k = 4
+		- feature maps in first layer = 6
+		- feature maps in second layer = 14
+	- for fine grained
+		- filter sizes = 10, 7
+		- pooling parameter is 5
+		- number of maps are 6 and 12 respectively
+
+- Results on 6 way TREC data set (questions )
