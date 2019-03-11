@@ -1,4 +1,10 @@
-
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from collections import Counter
+import torch.optim as optim
+from torchtext import data
+from torch.autograd import Variable
 import math
 import pandas as pd
 import numpy as np
@@ -6,6 +12,7 @@ from datetime import datetime
 import pyprind
 from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader
+import nltk
 tqdm.pandas()
 
 def load_glove_model(embedding_file_path):
@@ -19,14 +26,12 @@ def load_glove_model(embedding_file_path):
             word = line[0]
 #             words.append(word)
             word2idx[word] = idx
-
             vect = np.array(line[1:]).astype(np.float)
             glove2embedding[word] = vect
             idx += 1
             bar.update()
     print("Total vocabulary size of Embedding model is {}.".format(len(word2idx)))
     return glove2embedding
-
 
 def create_word2idx(list_of_text):
     words = {"_pad_": 0}
@@ -60,42 +65,67 @@ def create_embedding_matrix(embedding_dim, word2idx, embedding_function):
     return weights_matrix
 
 
-class VectorizeData_SST(Dataset):
-    def __init__(self, df=None, maxlen=10, word2idx=None):
+class VectorizeData(Dataset):
+    def __init__(
+        self,
+        df=None,
+        maxlen=10,
+        word2idx=None,
+        text_column_name="sentence",
+        label_column_name="sentiment",
+        constant_sent_length=True,
+        prepare_batchces_maxlen=True
+    ):
+        self.prepare_batchces_maxlen = prepare_batchces_maxlen
+        self.text_column_name = text_column_name
+        self.label_column_name = label_column_name
+        self.constant_sent_length = constant_sent_length
         self.maxlen = maxlen
         self.df = df
-        self.df['sentence'] = self.df.sentence.progress_apply(
+        self.df[self.text_column_name] = self.df[self.text_column_name].progress_apply(
             lambda x: x.strip()
         )
+        
         print('Indexing...')
-        self.df['sentimentidx'] = self. df.sentence.progress_apply(
+        self.df['textidxed'] = self.df[text_column_name].progress_apply(
             lambda x: [
-                word2idx[w.lower()]
-                for w in nltk.word_tokenize(x.strip())
+                word2idx[w.lower()] for w in nltk.word_tokenize(x.strip())
             ]
         )
         print('Calculating lengths')
-        self.df['lengths'] = self.df.sentimentidx.progress_apply(
-            lambda x: self.maxlen if len(x) > self.maxlen else len(x)
-        )
+        self.df["lengths"] = self.df.textidxed.progress_apply(lambda x: len(x))
+        
         print('Padding')
-        self.df['sentimentpadded'] = self.df.sentimentidx.progress_apply(
-            self.pad_data
-        )
-
+        if self.constant_sent_length is True:
+            self.df['textpadded'] = self.df.textidxed.progress_apply(
+                self.pad_data, args=(maxlen,)
+            )
+        
     def __len__(self):
         return self.df.shape[0]
-
+    
     def __getitem__(self, idx):
-        X = self.df.sentimentpadded[idx]
-        y = self.df.label[idx]
+        if self.constant_sent_length is False:
+            X = self.pad_data_live(idx)
+        else:
+            X = self.df.textpadded[idx]
+        y = self.df[self.label_column_name][idx]
         return X, y
-
-    def pad_data(self, s):
-        padded = np.zeros((self.maxlen,), dtype=np.int64)
-        if len(s) > self.maxlen: padded[:] = s[:self.maxlen]
+    
+    def pad_data(self, s, maxlen):
+        padded = np.zeros((maxlen,), dtype=np.int64)
+        if len(s) > maxlen: padded[:] = s[:maxlen]
         else: padded[:len(s)] = s
         return padded
+    
+    def pad_data_live(self, idx):
+        if self.prepare_batchces_maxlen is True:
+            maxlen = max(self.df.lengths[idx])
+        else:
+            maxlen = min(self.df.lengths[idx])
+        temp_df = self.df.loc[idx]
+        temp_df['textpadded'] = temp_df.textidxed.apply(self.pad_data, args=(maxlen,))
+        return temp_df.textpadded[idx]
 
 
 def print_number_of_trainable_parameters(model):

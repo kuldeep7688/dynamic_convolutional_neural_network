@@ -22,7 +22,7 @@ SST2_DATASET_PARAMETERS = {
     "dropout_rate": 0.4,
     "embedding_dim": 100,
     "vocab_length": None,
-    "output_dim": 3
+    "output_dim": 2
 }
 SST2_DATASET_PARAMETERS["cell_two_parameter_dict"]["sent_length"] = SST2_DATASET_PARAMETERS["cell_one_parameter_dict"]["k_max_number"]
 # pprint(SST_DATASET_PARAMETERS)
