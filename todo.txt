@@ -12,5 +12,8 @@
 		- filter sizes = 10, 7
 		- pooling parameter is 5
 		- number of maps are 6 and 12 respectively
+- add code for movie review data for command line checking
+- check the code in scripts for sst2
+- also add option to train using command line arguements
 
 - Results on 6 way TREC data set (questions )

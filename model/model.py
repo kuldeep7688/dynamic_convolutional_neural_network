@@ -1,16 +1,6 @@
 import torch
 import math
-# import nltk
-import pyprind
-import numpy as np
-import pandas as pd
-
 import torch.nn as nn
-import torch.optim as optim
-import torch.nn.functional as F
-from torchtext import data
-from torch.utils.data import Dataset, DataLoader
-from torch.autograd import Variable
 
 
 class DCNNCell(nn.Module):
