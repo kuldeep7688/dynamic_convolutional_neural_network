@@ -20,7 +20,7 @@ from utils.utilities import print_number_of_trainable_parameters\
     calculate_accuracy, save_checkpoint
 
 # importing model
-from model.model import DCNN_SST2
+from model.model import DCNN_SST
 
 # importing the model parameters
 from utils.model_parameters import SST2_DATASET_PARAMETERS
@@ -183,7 +183,7 @@ def prepare_data_loaders(
     traindl, valdl, testdl = data.BucketIterator.splits(
         datasets=(trainds, valds, testds),
         batch_sizes=(batch_size_train, batch_size_validation, batch_size_test),
-        sort_key=lambda x: x.sentence,
+        sort_key=lambda x: x[field_to_be_sorted_on],
         repeat=False,
         device=device
     )
@@ -214,7 +214,7 @@ if __name__ == "__main__":
     )
     SST2_DATASET_PARAMETERS["vocab_length"] = len(text_field.vocab.stoi)
 
-    model = DCNN_SST2(parameter_dict=SST2_DATASET_PARAMETERS)
+    model = DCNN_SST(parameter_dict=SST2_DATASET_PARAMETERS)
 
     pretrained_embeddings = text_field.vocab.vectors
     model.embedding.weight.data.copy_(pretrained_embeddings)

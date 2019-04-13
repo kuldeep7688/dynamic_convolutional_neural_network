@@ -1,5 +1,6 @@
 *.tar
 *.swp
+*.csv
 .ipynb_checkpoints/
 .vector_cache
 # Byte-compiled / optimized / DLL files

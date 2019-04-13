@@ -64,7 +64,7 @@ class Flatten(nn.Module):
         x = x.view(x.size()[0], -1)
         return x
 
-class DCNN_SST2(nn.Module):
+class DCNN_SST(nn.Module):
     def __init__(
         self,
         parameter_dict
@@ -126,3 +126,4 @@ class DCNN_SST2(nn.Module):
         out = self.fc(out)
         # print(fc.shape)
         return out
+
