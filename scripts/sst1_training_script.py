@@ -183,7 +183,7 @@ def prepare_data_loaders(
     traindl, valdl, testdl = data.BucketIterator.splits(
         datasets=(trainds, valds, testds),
         batch_sizes=(batch_size_train, batch_size_validation, batch_size_test),
-        sort_key=lambda x: x[field_to_be_sorted_on],
+        sort_key=lambda x: x.sentence,
         repeat=False,
         device=device
     )
