@@ -1,5 +1,6 @@
 import torch
 import nltk
+import pickle
 import torch.nn.functional as F
 import numpy as np
 import pyprind
@@ -86,3 +87,14 @@ def load_check_point(model, model_path):
 # tokenizer to be used in Field of torchtext
 def tokenizer_nltk(x):
     return nltk.word_tokenize(x.lower())
+
+def save_dict_to_disk(obj, path):
+    with open(path, 'wb') as fp:
+        pickle.dump(obj, fp, protocol=pickle.HIGHEST_PROTOCOL)
+    return
+
+
+def load_dict_from_disk(path):
+    with open(path, 'rb') as fp:
+        d = pickle.load(fp)
+    return d

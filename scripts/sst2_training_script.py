@@ -15,9 +15,9 @@ script_path = os.path.abspath('')
 sys.path.insert(0, abspath(script_path))
 # print(abspath(script_path))
 
-from utils.utilities import print_number_of_trainable_parameters\
-    , load_check_point, tokenizer_nltk, train, evaluate, \
-    calculate_accuracy, save_checkpoint
+from utils.utilities import print_number_of_trainable_parameters,\
+    load_check_point, tokenizer_nltk, train, evaluate,\
+    save_dict_to_disky, save_checkpoint
 
 # importing model
 from model.model import DCNN_SST
@@ -40,6 +40,11 @@ parser.add_argument(
     "--save_path_for_model", help="Mention the path for saving the model.",
     type=str,
     default="data/trained_models/trained_sst2_model_{}.tar".format(str(datetime.now()).replace(" ", "_"))
+)
+parser.add_argument(
+    "--save_path_for_vocab", help="Mention the path for saving the model.",
+    type=str,
+    default="data/trained_models/sst1_models/vocab_dict_sst1_{}.pkl".format(str(datetime.now()).replace(" ", "_"))
 )
 parser.add_argument(
     "--device", help="Mention the device to be used cuda or cpu,",
@@ -104,6 +109,7 @@ SENT_LENGTH = arguments.sentence_length
 SST2_DATASET_PARAMETERS["cell_one_parameter_dict"]["sent_length"] = SENT_LENGTH
 
 MODEL_PATH = arguments.save_path_for_model
+VOCAB_PATH = arguments.save_path_for_vocab
 DEVICE = arguments.device
 
 GLOVE_FILE_PATH = arguments.glove_file_path
@@ -212,6 +218,7 @@ if __name__ == "__main__":
         field_to_be_sorted_on=FIELD_TO_BE_SORTED_ON,
         device=DEVICE
     )
+    save_dict_to_disk(text_field.vocab, VOCAB_PATH)
     SST2_DATASET_PARAMETERS["vocab_length"] = len(text_field.vocab.stoi)
 
     model = DCNN_SST(parameter_dict=SST2_DATASET_PARAMETERS)
