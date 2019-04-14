@@ -3,11 +3,6 @@ import os
 import sys
 import torch
 import pandas as pd
-import torchtext
-import torch.nn as nn
-from torchtext import data
-import torch.optim as optim
-from datetime import datetime
 from os.path import abspath
 from argparse import ArgumentParser
 

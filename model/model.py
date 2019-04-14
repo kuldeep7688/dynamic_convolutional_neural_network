@@ -127,3 +127,53 @@ class DCNN_SST(nn.Module):
         # print(fc.shape)
         return out
 
+
+class DCNN_TREC(nn.Module):
+    def __init__(
+            self,
+            parameter_dict
+    ):
+        super().__init__()
+        self.parameter_dict = parameter_dict
+
+        self.embedding = nn.Embedding(
+            embedding_dim=self.parameter_dict["embedding_dim"],
+            num_embeddings=self.parameter_dict["vocab_length"]
+        )
+        self.dcnn_first_cell = DCNNCell(
+            cell_number=-1,
+            sent_length=self.parameter_dict["cell_one_parameter_dict"]["sent_length"],
+            conv_kernel_size=self.parameter_dict["cell_one_parameter_dict"]["conv_kernel_size"],
+            conv_input_channels=self.parameter_dict["cell_one_parameter_dict"]["conv_input_channels"],
+            conv_output_channels=self.parameter_dict["cell_one_parameter_dict"]["conv_output_channels"],
+            conv_stride=self.parameter_dict["cell_one_parameter_dict"]["conv_stride"],
+            k_max_number=self.parameter_dict["cell_one_parameter_dict"]["k_max_number"],
+            folding_kernel_size=self.parameter_dict["cell_one_parameter_dict"]["folding_kernel_size"],
+            folding_stride=self.parameter_dict["cell_one_parameter_dict"]["folding_stride"],
+        )
+        self.fc_layer_input = self.parameter_dict["cell_one_parameter_dict"]["k_max_number"] * \
+                              self.parameter_dict["cell_one_parameter_dict"]["conv_output_channels"] * \
+                              math.floor(self.parameter_dict["embedding_dim"]/2)
+
+        self.dropout = nn.Dropout(self.parameter_dict["dropout_rate"])
+        self.flatten = Flatten()
+        self.fc = nn.Linear(self.fc_layer_input, self.parameter_dict["output_dim"])
+
+    def forward(self, inp):
+        # [batch_size, sent_length]
+        embedded = self.embedding(inp)
+        # [batch_size, sent_length, embedding_dim]
+        # adding single channel dimension
+        embedded = embedded.unsqueeze(1)
+        # print(embedded.shape)
+        # [batch_size, 1(initial_input_channel), sent_length, embedding_dim]
+        out = self.dcnn_first_cell(embedded)
+        # print(out.shape)
+        # [batch_size, first_cell_output_channels, first_cell_k_maxed_number, embedding_dim/2]
+        out = self.dropout(self.flatten(out))
+        # print(flat.shape)
+        #[batch_size, last_cell_output_channels * last_cell_k_maxed_number * embedding_dim/2]
+        out = self.fc(out)
+        # print(fc.shape)
+        return out
+

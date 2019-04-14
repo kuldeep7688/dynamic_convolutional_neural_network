@@ -17,7 +17,7 @@ sys.path.insert(0, abspath(script_path))
 
 from utils.utilities import print_number_of_trainable_parameters,\
     load_check_point, tokenizer_nltk, train, evaluate,\
-    save_dict_to_disky, save_checkpoint
+    save_dict_to_disk, save_checkpoint
 
 # importing model
 from model.model import DCNN_SST
@@ -39,12 +39,12 @@ parser.add_argument(
 parser.add_argument(
     "--save_path_for_model", help="Mention the path for saving the model.",
     type=str,
-    default="data/trained_models/trained_sst2_model_{}.tar".format(str(datetime.now()).replace(" ", "_"))
+    default="data/trained_models/sst2_models/trained_sst2_model.tar"
 )
 parser.add_argument(
     "--save_path_for_vocab", help="Mention the path for saving the model.",
     type=str,
-    default="data/trained_models/sst1_models/vocab_dict_sst1_{}.pkl".format(str(datetime.now()).replace(" ", "_"))
+    default="data/trained_models/sst2_models/vocab_dict_sst2.pkl"
 )
 parser.add_argument(
     "--device", help="Mention the device to be used cuda or cpu,",
