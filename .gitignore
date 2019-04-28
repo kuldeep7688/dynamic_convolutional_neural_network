@@ -2,6 +2,7 @@
 *.swp
 *.csv
 *.pkl
+*.txt
 .ipynb_checkpoints/
 .vector_cache
 # Byte-compiled / optimized / DLL files
